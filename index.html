@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JSON Beautifier</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <style>
+        * {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+        body {
+            font-family: sans-serif;
+            font-size: 80%;
+            line-height: 1.4;
+            background: #fff;
+        }
+        .top {
+            background: #eee;
+            border-bottom: 1px solid #aaa;
+        }
+        .top, .bottom {
+            padding: 20px;
+        }
+        .top a {
+            text-decoration: none;
+            color: #00af81;
+        }
+        .form_elems {
+            overflow: hidden;
+            padding-top: 20px;
+        }
+        .form_elems textarea {
+            width: 100%;
+            padding: 5px;
+            border: 0;
+            margin: 0;
+            height: 80px;
+            float: left;
+            resize: vertical;
+        }
+        .form_elems textarea:focus {
+            outline: 0;
+            border: 1px solid #ccc;
+            border-bottom: 0;
+        }
+        .form_elems button {
+            padding: 5px 20px;
+            border: 0;
+            color: #fff;
+            width: 100%;
+            font-weight: bold;
+            margin: 0;
+            background: #ccc;
+            float: left;
+        }
+        .form_elems button:hover {
+            background: #00af81;
+        }
+        #result {
+            font-size: 1.2em;
+        }
+        #result pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
+        #result .string { color: green; }
+        #result .number { color: darkorange; }
+        #result .boolean { color: blue; }
+        #result .null { color: magenta; }
+        #result .key { color: red; }
+    </style>
+</head>
+<body>
+
+    <div class="top">
+        <h1>JSON Beautifier</h1>
+        <p><b>Turns a stringified JSON object into a pretty, nested object.</b> &mhdash; A thing by <a href="http://pauladamdavis.com">Paul Adam Davis</a></p>
+
+        <div class="form_elems">
+            <textarea id="the_json"></textarea>
+            <button id="go">Go</button>
+        </div>
+    </div>
+
+    <div class="bottom">
+        <pre id="result"></pre>
+    </div>
+
+    <script>
+
+        function output(inp) {
+
+        }
+
+
+        function syntaxHighlight(json) {
+            var json = JSON.stringify(JSON.parse(json), null, 2);
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                var cls = 'number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'key';
+                    } else {
+                        cls = 'string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+            // return json;
+        }
+
+        document.getElementById("go").onclick=function(e){
+            e.preventDefault ? e.preventDefault() : e.returnValue = false;
+            var the_json = document.getElementById("the_json").value;
+            document.getElementById("result").innerHTML = syntaxHighlight(the_json);
+        };
+
+    </script>
+
+</body>
+</html>
